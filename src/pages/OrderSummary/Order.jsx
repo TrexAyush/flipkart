@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from '../../components/Header/Header'
-import { Button, Card, Checkbox, Divider, Paper, Typography } from '@mui/material'
+import { Button, Card, Checkbox } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import MetaData from '../../Layouts/MetaData';
 // import Stepper from './Stepper';
@@ -8,19 +8,20 @@ import { useSelector } from 'react-redux';
 import CartItem from '../Cart/CartItem';
 import PriceSidebar from '../Cart/PriceSidebar';
 import Footer from '../../components/Footer/Footer';
+// import Cart from '../Cart/Cart';
+import EmptyCart from '../Cart/EmptyCart';
 
 const Order = () => {
     const navigate = useNavigate();
     const { cartItems } = useSelector((state) => state.cart);
     const { shippingInfo } = useSelector((state) => state.cart);
 
+
     const handleChangeAddress = () =>{
         navigate("/add-new-address")
     }
+    
 
-    const handleSubmit = () => {
-        navigate("/payments")
-    }
   return (
     <>
     <MetaData title="Flipkart: Order Confirmation" />
@@ -29,13 +30,13 @@ const Order = () => {
         <div className="w-full">
             <img className="w-full shadow-md" src="orderSummary.png" alt="orderSummary" />
         </div>
-        <div className="flex w-full flex-col space-y-2 py-2">
-            <Card className="w-full flex-col p-4">
+        <div className="flex flex-col w-full py-2 space-y-2">
+            <Card className="flex-col w-full p-4">
                 <div className="flex flex-row w-full pb-2">
-                    <div className="flex w-full justify-start">
-                        <h1 className="text-sm font-serif ">Deliver to:</h1>
+                    <div className="flex justify-start w-full">
+                        <h1 className="font-serif text-base ">Deliver to:</h1>
                     </div>
-                    <div className="flex w-full justify-end">
+                    <div className="flex justify-end w-full">
                         <Button
                         variant="outlined"
                         size='small'
@@ -48,7 +49,7 @@ const Order = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="flex flex-col text-xs space-y-1">
+                <div className="flex flex-col space-y-1 text-sm">
                     <div className="font-serif">
                         <h1>{shippingInfo.name}</h1>
                     </div>
@@ -57,20 +58,26 @@ const Order = () => {
                         {shippingInfo.addline2} <br/> 
                         {shippingInfo.city}, {shippingInfo.state}, {shippingInfo.pincode}
                     </div>
-                    <div className="font-sans font-medium">
+                    <div className="font-sans text-base font-medium">
                         <h1>{shippingInfo.number}</h1>
                     </div>
                 </div>
             </Card>
             <Card>
                 <div className="w-full bg-white">
-                    {cartItems?.map((item, i) => (
-                        <CartItem {...item} inCart={false} key={i} />
-                    ))}
+                    {cartItems && cartItems.length === 0 && (
+                                <EmptyCart />
+                            )}
+
+                            {cartItems && cartItems.map((item) => (
+                                <CartItem {...item} inCart={true} />
+                            )
+                            )}
+                    {/* <Cart/> */}
                 </div>
             </Card>
             <Card
-                className="w-full flex-row p-2"
+                className="flex-row w-full p-2"
             >
                 <div className='flex items-center'>
                 <Checkbox size="small" className="flex" checked={false}/>
@@ -83,9 +90,9 @@ const Order = () => {
             <div>
                 <img src="FlipkartPlus4scbanner.png" alt="banner"/>
             </div>
-            <div className="flex p-7 flex-row space-x-2 justify-center items-center">
+            <div className="flex flex-row items-center justify-center space-x-2 p-7">
                 <img className='flex w-[40px] h-[40px]' src="shield.png" alt='sheild'/>
-                <h1 className='flex w-full font-serif font-light text-xs text-gray-500'>Safe and Secure payments. Easy returns. 100% Authentic products</h1>
+                <h1 className='flex w-full font-serif text-xs font-light text-gray-500'>Safe and Secure payments. Easy returns. 100% Authentic products</h1>
             </div>
         </div>
     </div>

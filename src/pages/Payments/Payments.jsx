@@ -1,8 +1,7 @@
 import React from 'react'
 import MetaData from '../../Layouts/MetaData';
 import Header from '../../components/Header/Header'
-import { Button, Card, Checkbox, Divider,FormLabel,Radio,FormControl,RadioGroup,FormControlLabel,Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { Card, Divider,Radio } from '@mui/material'
 import { useSelector } from 'react-redux';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import HelpIcon from '@mui/icons-material/Help';
@@ -15,39 +14,41 @@ const Payments = () => {
 
   return (
     <>
-    <MetaData title="Flipkart: Order Confirmation" />
-    <Header title="Order Summary"/>
+    <MetaData title="Flipkart | Payments" />
+    <Header title="Payments"/>
     <div className="flex flex-col w-full bg-[#f1f2f4]">
         <div className="w-full">
             <img className="w-full shadow-md" src="assets/payment.svg" alt="orderSummary" />
         </div>
-        <div className="flex w-full flex-col space-y-2 py-2">
-            <Card className="w-full flex-col p-4 shadow-lg ">
-              <p className="text-sm flex items-center">
+        <div className="flex flex-col w-full py-2 space-y-2">
+            <Card className="flex-col w-full p-4 shadow-lg ">
+              <p className="flex items-center text-sm">
                 <span className="text-green-600"><LocalOfferIcon sx={{ fontSize: "20px" }} /></span>
-                <span className="mx-2">15% Instant discount on first Flipkart Pay Later order of 500 and above </span><span className="text-blue-600 font-semibold font-sans text-sm" to="/">T&C</span>
+                <span className="mx-2">15% Instant discount on first Flipkart Pay Later order of 500 and above </span><span className="font-sans text-sm font-semibold text-blue-600" to="/">T&C</span>
               </p>
               <Divider/>
-              <div className="flex justify-center align-middle items-center">
-                  <h1 className="text-sm font-medium font-sans mt-1 text-blue-600">View all offers</h1>
+              <div className="flex items-center justify-center align-middle">
+                  <h1 className="mt-1 font-sans text-sm font-medium text-blue-600">View all offers</h1>
               </div>
             </Card>
-            <Card className="w-full flex-col p-2 shadow-lg ">
+            <Card className="flex-col w-full p-2 shadow-lg ">
                 <div className="flex flex-col w-full space-y-2">
                   <div className="flex flex-row w-full">
                     <div className="flex items-center w-full">
                       <div className="flex">
-                        <Radio disabled size="small"/>
+                        <Radio  size="small" checked/>
                       </div>
                       <div className="flex">
-                        <h1 className="text-gray-400 font-sans font-normal text-sm">UPI</h1>
+                        <h1 className="font-sans text-sm font-normal ">UPI</h1>
                       </div>
                     </div>
-                    <div className="flex items-center">
-                        <h1 className="text-gray-400 font-sans font-normal text-[12px]">Unavailable</h1>
+                    <div className="flex items-center p-1 mr-2">
+                    
+                        <img className="w-10 h-auto" src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/batman-returns/logos/UPI.gif"/>
+                        {/* <h1 className="text-gray-400 font-sans font-normal text-[12px]">Unavailable</h1>
                         <HelpIcon sx={{ color:"#e5e7eb",
                                         fontSize:"25px"
-                        }}/>
+                        }}/> */}
                     </div>
                   </div>
 
@@ -59,7 +60,7 @@ const Payments = () => {
                         <Radio disabled size="small"/>
                       </div>
                       <div className="flex">
-                        <h1 className="text-gray-400 font-sans font-normal text-sm">Wallets</h1>
+                        <h1 className="font-sans text-sm font-normal text-gray-400">Wallets</h1>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -72,10 +73,10 @@ const Payments = () => {
                   <Divider/>
                   <div className="flex flex-row w-full">
                     <div className="flex items-center ">
-                        <Radio size="small" checked/>
+                        <Radio disabled size="small" />
                     </div>
-                    <div className="flex flex-col justify-start items-center space-y-1">
-                        <h1 className=" w-full font-sans font-normal text-sm">Credit / Debit / ATM Card</h1>
+                    <div className="flex flex-col items-center justify-start space-y-1">
+                        <h1 className="w-full font-sans text-sm font-normal text-gray-400">Credit / Debit / ATM Card</h1>
                         <h1 className="w-full text-gray-400 font-sans font-normal text-[12px]">Add and secure your card as per RBI guidelines</h1>
                     </div>
                   </div>
@@ -86,7 +87,7 @@ const Payments = () => {
                         <Radio disabled size="small"/>
                       </div>
                       <div className="flex">
-                        <h1 className="text-gray-400 font-sans font-normal text-sm">Net Banking</h1>
+                        <h1 className="font-sans text-sm font-normal text-gray-400">Net Banking</h1>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -103,7 +104,7 @@ const Payments = () => {
                         <Radio disabled size="small"/>
                       </div>
                       <div className="flex">
-                        <h1 className="text-gray-400 font-sans font-normal text-sm">EMI (Easy Installments)</h1>
+                        <h1 className="font-sans text-sm font-normal text-gray-400">EMI (Easy Installments)</h1>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -120,7 +121,7 @@ const Payments = () => {
                         <Radio disabled size="small"/>
                       </div>
                       <div className="flex">
-                        <h1 className="text-gray-400 font-sans font-normal text-sm">Cash on Delivery</h1>
+                        <h1 className="font-sans text-sm font-normal text-gray-400">Cash on Delivery</h1>
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -133,7 +134,7 @@ const Payments = () => {
                 </div>
             </Card>
             <Card
-                className="w-full flex-row p-2 pl-4 shadow-lg"
+                className="flex-row w-full p-2 pl-4 shadow-lg"
             >
                 <div className='flex items-center space-x-2'>
                   <AddIcon sx={{ 
@@ -148,13 +149,13 @@ const Payments = () => {
             <div className="w-full">
                 <img className="w-full" src="assets/safety1.svg" alt="banner"/>
             </div>
-            <div className="flex p-3 flex-row justify-center items-center">
+            <div className="flex flex-row items-center justify-center p-3">
                 <img className='flex w-full' src="assets/safety2.jpg" alt='sheild'/>
-                {/* <h1 className='flex w-full font-serif font-light text-xs text-gray-500'>Safe and Secure payments. Easy returns. 100% Authentic products</h1> */}
+                {/* <h1 className='flex w-full font-serif text-xs font-light text-gray-500'>Safe and Secure payments. Easy returns. 100% Authentic products</h1> */}
             </div>
         </div>
     </div>
-    <Footer cartItems={cartItems} navigation="/card-payments"/>
+    <Footer cartItems={cartItems} navigation="/upi-payments"/>
     </>
   )
 }

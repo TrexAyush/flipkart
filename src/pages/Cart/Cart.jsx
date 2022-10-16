@@ -14,7 +14,7 @@ const Cart = () => {
     const { saveForLaterItems } = useSelector((state) => state.saveForLater);
 
     const placeOrderHandler = () => {
-        navigate('/login?redirect=shipping');
+        navigate('/shipping');
     }
 
     return (
@@ -30,8 +30,8 @@ const Cart = () => {
                     <div className="flex-1">
 
                         {/* <!-- cart items container --> */}
-                        <div className="flex flex-col shadow-lg bg-white">
-                            <span className="font-medium text-lg px-2 sm:px-8 py-4 border-b">My Cart ({cartItems.length})</span>
+                        <div className="flex flex-col bg-white shadow-lg">
+                            <span className="px-2 py-4 text-lg font-medium border-b sm:px-8">My Cart ({cartItems.length})</span>
 
                             {cartItems && cartItems.length === 0 && (
                                 <EmptyCart />
@@ -44,7 +44,7 @@ const Cart = () => {
 
                             {/* <!-- place order btn --> */}
                             <div className="flex justify-end">
-                                <button onClick={placeOrderHandler} disabled={cartItems.length < 1 ? true : false} className={`${cartItems.length < 1 ? "bg-gray-500 cursor-not-allowed" : "bg-orange-500   "} w-full sm:w-1/3 mx-2 sm:mx-6 my-4 py-3 font-medium text-white shadow hover:shadow-lg rounded-sm`}>PLACE ORDER</button>
+                                <button onClick={placeOrderHandler} disabled={cartItems.length < 1 ? true : false} className={`${cartItems.length < 1 ? "bg-gray-500 cursor-not-allowed" : "bg-orange-500 "} w-full sm:w-1/3 mx-2 sm:mx-6 my-4 py-3 font-medium text-white shadow hover:shadow-lg rounded-sm`}>PLACE ORDER</button>
                             </div>
                             {/* <!-- place order btn --> */}
 
@@ -52,8 +52,8 @@ const Cart = () => {
                         {/* <!-- cart items container --> */}
 
                         {/* <!-- saved for later items container --> */}
-                        <div className="flex flex-col mt-5 shadow bg-white">
-                            <span className="font-medium text-lg px-2 sm:px-8 py-4 border-b">Saved For Later ({saveForLaterItems.length})</span>
+                        <div className="flex flex-col mt-5 bg-white shadow">
+                            <span className="px-2 py-4 text-lg font-medium border-b sm:px-8">Saved For Later ({saveForLaterItems.length})</span>
                             {saveForLaterItems && saveForLaterItems.map((item) => (
                                 <SaveForLaterItem {...item} />
                             )

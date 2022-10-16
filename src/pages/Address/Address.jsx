@@ -1,5 +1,5 @@
-import {React,useState} from 'react'
-import { Button, TextField, Typography, Select} from '@mui/material'
+import {React} from 'react'
+import { Button, TextField, Typography} from '@mui/material'
 import { useForm } from 'react-hook-form'
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import HomeIcon from '@mui/icons-material/Home';
@@ -18,9 +18,6 @@ const Address = () => {
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const { shippingInfo } = useSelector((state) => state.cart);
-
-    const [userState, setUserState] = useState("");
-    const [userCity, setUserCity] = useState("");
 
     const addressSchema = Yup.object().shape({ 
         name:Yup
@@ -47,8 +44,8 @@ const Address = () => {
         addline1:Yup
             .string()
             .required("Please provide the necessary details."),
-        addline2:Yup.
-            string()
+        addline2:Yup
+            .string()
             .required("Please provide the necessary details."),
     })
     const {
@@ -76,7 +73,7 @@ const Address = () => {
         axios.get(`https://api.postalpincode.in/pincode/${pincode}`)
         .then((response)=>{
             const {data}= response;
-            console.log(data)
+            // console.log(data)
             setValue("city",data[0].PostOffice[0].District)
             setValue("state",data[0].PostOffice[0].State)
         }).catch((error)=>{
@@ -90,19 +87,19 @@ const Address = () => {
         enqueueSnackbar("Address saved", { variant: "success" });
         navigate("/order-summary")
         
-        console.log(data)
+        // console.log(data)
     }
 
 
   return (
     <>
     <Header title="Add delivery address"/>
-    <div className="w-full flex flex-col">
+    <div className="flex flex-col w-full">
         <div className="w-full">
             <img className="w-full shadow-md" src="steps.svg" alt='steps'/>
         </div>
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex p-2 w-full flex-col space-y-3">
+        <div className="flex flex-col w-full p-2 space-y-3">
             <TextField
                 id="name"
                 {...register("name")}
@@ -136,6 +133,7 @@ const Address = () => {
                       },
                 }}
                 inputProps={{
+                    maxLength:10,
                     style: { 
                       fontSize: "16px"
                     },
@@ -143,7 +141,7 @@ const Address = () => {
                 error={Boolean(errors?.number)}
                 helperText={errors.number?.message}
             />
-            <div className="flex w-full flex-row space-x-4">
+            <div className="flex flex-row w-full space-x-4">
                 <div className="flex w-full">
                 <TextField
                     id="pincode"
@@ -163,6 +161,7 @@ const Address = () => {
                           },
                     }}
                     inputProps={{
+                        maxLength:6,
                         style: { 
                           fontSize: "16px"
                         },
@@ -184,7 +183,7 @@ const Address = () => {
                     </Button>
                 </div>
             </div>
-            <div className="flex w-full flex-row space-x-2">
+            <div className="flex flex-row w-full space-x-2">
                 <div className="flex">
                     <TextField
                         id="state"
@@ -270,11 +269,11 @@ const Address = () => {
                   error={Boolean(errors?.addline2)}
                   helperText={errors.addline2?.message}
             />
-            <div className=" flex flex-col">
+            <div className="flex flex-col ">
                 <div className="flex">
-                    <h1 className="text-left text-xs font-serif text-gray-500">Type of address</h1>
+                    <h1 className="font-serif text-xs text-left text-gray-500">Type of address</h1>
                 </div>
-                <div className="flex space-x-2 p-2">
+                <div className="flex p-2 space-x-2">
                     <Button
                     variant="contained"
                     size="small"
@@ -301,7 +300,7 @@ const Address = () => {
             fullWidth
             variant='contained'
             type='submit'
-            className=" bottom-0"
+            className="bottom-0 "
             sx={{ backgroundColor:"#FF5800"}}
             >
                 Save Address

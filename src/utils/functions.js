@@ -1,4 +1,6 @@
 import { products } from "./constants";
+// import {USEREMAIL,PASSWORD} from '../.env';
+
 
 export const getDiscount = (price, cuttedPrice) => {
     return (((cuttedPrice - price) / cuttedPrice) * 100).toFixed();
@@ -16,6 +18,83 @@ export const formatDate = (dt) => {
 
 export const getRandomProducts = (prodsArray, n) => {
     return prodsArray.sort(() => 0.5 - Math.random()).slice(0, n)
+}
+
+export const userLogin = (userData) => {
+    const response = {
+            "success": true,
+            "user": {
+            "avatar": {
+                "public_id": "avatars/vqujiyqxe9w9v81ae4to",
+                "url": "https://res.cloudinary.com/dsthtg2ks/image/upload/v1664392790/avatars/vqujiyqxe9w9v81ae4to.jpg"
+            },
+            "_id": "63349ed104c8ffa64d233174",
+            "name": "ayushAdmin",
+            "email": "ayushAdmin@gmail.com",
+            "gender": "male",
+            "password": "$2a$10$w6Cyc1QoLoDvrfqfchL3mO5tff.n.M.Fe1slgWdkt9FM5yWtzo5IO",
+            "role": "admin",
+            "createdAt": "2022-09-28T19:19:50.407Z",
+            "__v": 0
+        },
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMzQ5ZWQxMDRjOGZmYTY0ZDIzMzE3NCIsImlhdCI6MTY2NTAzNDk5MiwiZXhwIjoxNjY1NjM5NzkyfQ.C75I6XFgBwfnzBLeSeW-7Ewe-b4RsU607Vl6DfOSHi4"
+    }
+
+    return response
+}
+
+export const addProduct = (newProduct) =>{
+    
+    products.push(newProduct)
+    const response ={
+            "success": true,
+            "product": {
+                "name": "sdsjkhkj",
+                "description": "jkhdjkshkshk",
+                "highlights": [
+                    "fdfhdjk"
+                ],
+                "specifications": [
+                    {
+                        "title": "jsdhfsd",
+                        "description": "hjdshfskj",
+                        "_id": "633eaf010de020980dafbe9c"
+                    },
+                    {
+                        "title": "sdhgsd",
+                        "description": "gsdhsgf",
+                        "_id": "633eaf010de020980dafbe9d"
+                    }
+                ],
+                "price": 10,
+                "cuttedPrice": 10,
+                "images": [
+                    {
+                        "public_id": "products/yjomfhc5kbgweicr1y0d",
+                        "url": "https://res.cloudinary.com/dsthtg2ks/image/upload/v1665052410/products/yjomfhc5kbgweicr1y0d.webp",
+                        "_id": "633eaf010de020980dafbe9e"
+                    }
+                ],
+                "brand": {
+                    "name": "hdsf",
+                    "logo": {
+                        "public_id": "brands/nvvtg1jvmegv5eiseuzb",
+                        "url": "https://res.cloudinary.com/dsthtg2ks/image/upload/v1665052412/brands/nvvtg1jvmegv5eiseuzb.png"
+                    }
+                },
+                "category": "Electronics",
+                "stock": 10,
+                "warranty": 10,
+                "ratings": 0,
+                "numOfReviews": 0,
+                "user": "63349ed104c8ffa64d233174",
+                "_id": "633eaf010de020980dafbe9b",
+                "reviews": [],
+                "createdAt": "2022-10-06T10:33:37.294Z",
+                "__v": 0
+            }
+        }
+    return response
 }
 
 export const getAllProducts = () => {

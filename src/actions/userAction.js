@@ -37,6 +37,7 @@ import {
     ALL_USERS_REQUEST,
 } from '../constants/userConstants';
 import axios from 'axios';
+import {userLogin} from '../utils/functions'
 
 // Login User
 export const loginUser = (email, password) => async (dispatch) => {
@@ -44,17 +45,18 @@ export const loginUser = (email, password) => async (dispatch) => {
 
         dispatch({ type: LOGIN_USER_REQUEST });
 
-        const config = {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }
-
-        const { data } = await axios.post(
-            '/api/v1/login',
-            { email, password },
-            config
-        );
+        // const config = {
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        // }
+        const data = userLogin({ email, password });
+        
+        // const { data } = await axios.post(
+        //     '/api/v1/login',
+        //     { email, password },
+        //     config
+        // );
 
         dispatch({
             type: LOGIN_USER_SUCCESS,
